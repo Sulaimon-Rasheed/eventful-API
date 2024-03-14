@@ -24,8 +24,6 @@ import { Event } from '../events/events.model';
 import { Transaction } from '../transactions/transactions.model';
 import axios from 'axios';
 import * as qrcode from 'qrcode';
-import { Auth0Service } from 'src/auth/auth0.service';
-import { UpdateEventDto } from 'src/events/dto/update-event.dto';
 import { CacheService } from 'src/cache/cache.service';
 import { emailVerificationDto } from './dto/emailVerification.dto';
 import { newEpasswordDto } from './dto/newEpassword.dto';
