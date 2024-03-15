@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsObject, IsString, IsNumber } from "class-validator"
+import { IsNotEmpty, IsObject, IsString, IsNumber, IsEmpty } from "class-validator"
 
 export class CreateEventeeDto {
     @IsString()
@@ -17,8 +17,8 @@ export class CreateEventeeDto {
     @IsNotEmpty()
     email:string
 
-    @IsString()
-    eventeeReminder_days:string
+    @IsEmpty()
+    eventeeReminder_days:any
 
     @IsString()
     @IsNotEmpty()
