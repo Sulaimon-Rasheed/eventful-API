@@ -387,9 +387,9 @@ export class CreatorsService {
 
   async getCreatorHomePage(req: any, res: Response) {
     try {
-        await this.Authservice.ensureLogin(req, res);
         return res.json({
-          page:"Creator home page",
+          page:"Welcome to the Creator home page",
+          purpose:"...where the unforgetable moments are created"
         })
     } catch (err) {
       throw new Error(err.message)
@@ -925,7 +925,14 @@ async debitWallet(debitDto:debitDto, walletId:string, req:any, res:Response, ){
         })
       }
 
-      event.reminder_days = UpdateEventDto.reminder_days;
+      let theDay = UpdateEventDto.reminder_days;
+      if(!theDay){
+        return res.json({
+          error:"reminder day can not be empty"
+        })
+      }
+
+      event.reminder_days = theDay
       event.save();
 
       return res.json({

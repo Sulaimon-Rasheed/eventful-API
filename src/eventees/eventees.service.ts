@@ -812,7 +812,14 @@ async  getAttendedEventsPage(req:Request, res:Response) {
         throw new NotFoundException("eventee not found")
       }
 
-      eventee.eventeeReminder_days = UpdateEventeeDto.eventeeReminder_days;
+      let theDay = UpdateEventeeDto.eventeeReminder_days;
+      if(!theDay){
+        return res.json({
+          error:"reminder day can not be empty"
+        })
+      }
+
+      eventee.eventeeReminder_days = theDay
       eventee.save();
 
       return res.json({
