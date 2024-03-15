@@ -431,8 +431,21 @@ export class CreatorsService {
           let currentDate = DateTime.now();
           const pastDay = currentDate.diff(parsedDate, 'days').toObject().days
 
+          let theDay;
+              if( pastDay >=0 && pastDay< 0.5){
+                theDay = "today"
+              }else if(pastDay >=0.5 && pastDay < 1.5){
+                theDay = "yesterday"
+              }else if(pastDay > 30){
+                theDay = `${Math.floor((pastDay)/30)} month(s) ago`
+              }else if(pastDay > 365){
+                theDay = `${Math.floor((pastDay)/365)} year(s) ago`
+              }else{
+                theDay = `${Math.round(pastDay)} days`
+              }
+
           const neededInfo = {
-            posted:`${pastDay} ago`,
+            posted:theDay,
             title:event.title,
             eventImage:event.event_image,
             time:`${event.starting_time} - ${event.ending_time}`,
