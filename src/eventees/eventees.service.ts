@@ -96,7 +96,7 @@ export class EventeesService {
         }
       });
 
-      const currUrl = 'https://9cbd-102-88-68-64.ngrok-free.app';
+      const currUrl = 'https://eventful-api-ky65.onrender.com';
       let uniqueString = newEventee._id + uuidv4();
       const hashedUniqueString = await encoding.encodePassword(uniqueString);
 
@@ -144,7 +144,7 @@ export class EventeesService {
 
 
   getSignUpPage(req:any, res:Response) {
-    let currUrl = "http://localhost:9000"
+    let currUrl = "https://eventful-api-ky65.onrender.com"
     try{
       return res.json({
         page:"Sign Up page",
@@ -157,7 +157,7 @@ export class EventeesService {
 
  
     getPasswordResetPage(res: Response) {
-      let currUrl = "http://localhost:9000"
+      let currUrl = "https://eventful-api-ky65.onrender.com"
       try{
         return res.json({
           page:"Password Reset page",
@@ -282,7 +282,7 @@ export class EventeesService {
       eventee.passwordResetToken = hashedResetToken;
       eventee.passwordResetExpireDate = Date.now() + 10 * 60 * 1000;
       eventee.save();
-      const currUrl = 'http://localhost:8000';
+      const currUrl = 'https://eventful-api-ky65.onrender.com';
       this.mailservice.sendVerificationEmail({
         email: eventee.email,
         subject: 'We received your request for password reset',
@@ -512,7 +512,7 @@ export class EventeesService {
           time:`${event.starting_time} - ${event.ending_time}`,
           venue:event.venue,
           creator:event.creatorId,
-          shareEventUrl:`http://localhost:9000/events/thisEvent/${event._id}`
+          ReadEventUrl:`https://eventful-api-ky65.onrender.com/events/thisEvent/${event._id}`
           
         }
 
@@ -578,7 +578,7 @@ export class EventeesService {
           time:`${event.starting_time} - ${event.ending_time}`,
           venue:event.venue,
           creator:event.creatorId,
-          shareEventUrl:`http://localhost:8000/events/thisEvent/${event._id}`
+          ReadEventUrl:`https://eventful-api-ky65.onrender.com/events/thisEvent/${event._id}`
           
         }
 

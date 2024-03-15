@@ -92,7 +92,7 @@ export class CreatorsService {
         }
       });
 
-      const currUrl = 'http://localhost:8000';
+      const currUrl = 'https://eventful-api-ky65.onrender.com';
       let uniqueString = newCreator._id + uuidv4();
 
       const hashedUniqueString = await encoding.encodePassword(uniqueString);
@@ -151,7 +151,7 @@ export class CreatorsService {
 
 
   getSignupPage(req:any, res:Response) {
-    let currUrl = "http://localhost:9000"
+    let currUrl = "https://eventful-api-ky65.onrender.com"
     try{
       return res.json({
         page:"Sign Up page",
@@ -164,7 +164,7 @@ export class CreatorsService {
 
 
     getLoginPage(res:Response) {
-      let currUrl = "http://localhost:9000"
+      let currUrl = "https://eventful-api-ky65.onrender.com"
       try{
         return res.json({
           page:"Login page",
@@ -176,7 +176,7 @@ export class CreatorsService {
       }
 
       getPasswordResetPage(res: Response) {
-        let currUrl = "http://localhost:9000"
+        let currUrl = "https://eventful-api-ky65.onrender.com"
         try{
           return res.json({
             page:"Password Reset page",
@@ -256,7 +256,7 @@ export class CreatorsService {
       console.log(resetToken);
       console.log(hashedResetToken);
       creator.save();
-      const currUrl = 'http://localhost:8000';
+      const currUrl = 'https://eventful-api-ky65.onrender.com';
       this.mailservice.sendVerificationEmail({
         email: creator.email,
         subject: 'We received your request for password reset',
@@ -451,7 +451,7 @@ export class CreatorsService {
             time:`${event.starting_time} - ${event.ending_time}`,
             venue:event.venue,
             creator:event.creatorId,
-            shareEventUrl:`http://localhost:9000/events/thisEvent/${event._id}`
+            shareEventUrl:`https://eventful-api-ky65.onrender.com/events/thisEvent/${event._id}`
             
           }
           theEvents.push(neededInfo)
@@ -643,7 +643,7 @@ async debitWallet(debitDto:debitDto, walletId:string, req:any, res:Response, ){
               time:`${event.starting_time} - ${event.ending_time}`,
               venue:event.venue,
               creator:event.creatorId,
-              shareEventUrl:`http://localhost:9000/events/thisEvent/${event._id}`
+              shareEventUrl:`https://eventful-api-ky65.onrender.com/events/thisEvent/${event._id}`
               
             }
     
@@ -699,7 +699,7 @@ async debitWallet(debitDto:debitDto, walletId:string, req:any, res:Response, ){
           time:`${event.starting_time} - ${event.ending_time}`,
           venue:event.venue,
           creator:event.creatorId,
-          shareEventUrl:`http://localhost:9000/events/thisEvent/${event._id}`
+          ReadEventUrl:`https://eventful-api-ky65.onrender.com/events/thisEvent/${event._id}`
           
         }
 

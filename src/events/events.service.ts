@@ -98,7 +98,7 @@ export class EventsService {
 
   async getEventCreationPage(req:any, res: Response) {
     try{
-      let currUrl = "http://localhost:9000"
+      let currUrl = "https://eventful-api-ky65.onrender.com"
       await this.Authservice.ensureLogin(req, res);
       const user = await this.creatorModel.findOne({ _id: res.locals.user.id });
      
@@ -342,7 +342,7 @@ export class EventsService {
           venue:event.venue,
           registration_deadline:event.registration_deadline,
           price:event.ticket_price,
-          purchaseUrl:`http://localhost:9000/eventees/buyTicket/${res.locals.user.id}/${event.ticket_price}`
+          purchaseUrl:`https://eventful-api-ky65.onrender.com/eventees/buyTicket/${res.locals.user.id}/${event.ticket_price}`
 
         }
 
