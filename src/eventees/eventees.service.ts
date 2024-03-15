@@ -253,7 +253,7 @@ export class EventeesService {
       res.cookie('jwt', token, { maxAge: 60 * 60 * 1000 });
       return res.json({
         message:"Successful login",
-        dashboardUrl:`/eventees/eventeeDashboard`
+        token:token,
       })
     } catch (err) {
       throw new Error(err.message)

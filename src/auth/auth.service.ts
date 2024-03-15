@@ -11,7 +11,7 @@ export class AuthService {
     generateJwtToken(id: object, email:string, name:string, image:object, res:Response): string {
         try{
             const tokenPayload = { id, email, name, image };
-            return jwt.sign(tokenPayload, this.jwtSecret, { expiresIn: '1h' }); 
+            return jwt.sign(tokenPayload, this.jwtSecret, { expiresIn: '2h' }); 
         }catch(err){
             throw new Error(err.meessage)
         }
@@ -20,16 +20,18 @@ export class AuthService {
 
     async ensureLogin(req:Request, res:Response){
         try{
-            const token:string = req.cookies.jwt
-            if(!token){
-               return res.json({
-                message:"Token not found"
-               })
-            }
-    
-            const decoded = await jwt.verify(token, this.jwtSecret)
-    
+
+            const bearerwithToken = req.headers.authorization
+            if(!bearerwithToken){
+              return res.json({
+                message:"Jwt is required"
+              })
+          }
+            const token = bearerwithToken.split(" ")[1]
+            
+            const decoded = await jwt.verify(token , process.env.JWT_SECRET)
             res.locals.user = decoded
+
         }catch(err){
             throw new Error(err.meessage)
         }
