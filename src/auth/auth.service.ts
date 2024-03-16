@@ -24,6 +24,7 @@ export class AuthService {
             const bearerwithToken = req.headers.authorization
             if(!bearerwithToken){
               return res.json({
+                code:401,
                 message:"Jwt is required"
               })
           }
