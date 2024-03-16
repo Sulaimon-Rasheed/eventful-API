@@ -55,7 +55,7 @@ export class EventeesService {
 
   async createEventee(
     createEventeeDto: CreateEventeeDto,
-    filePath: string,
+    profileImage:Express.Multer.File,
     req:any,
     res: Response,
   ) {
@@ -68,7 +68,8 @@ export class EventeesService {
       }
 
       const password = await encoding.encodePassword(createEventeeDto.password);
-      const result = await v2.uploader.upload(filePath, {
+      
+      const result = await v2.uploader.upload(profileImage.path, {
         folder: 'eventful_eventees_ProfileImage',
       });
 
@@ -90,7 +91,7 @@ export class EventeesService {
         password: password,
       });
 
-      fs.unlink(filePath, (err) => {
+      fs.unlink(profileImage.path, (err) => {
         if (err) {
           throw new Error('file unlink failed');
         }

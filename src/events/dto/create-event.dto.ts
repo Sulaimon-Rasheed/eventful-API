@@ -48,4 +48,6 @@ export class CreateEventDto {
     @IsString()
     additional_info:string
 
+    event_image:any
+
 }

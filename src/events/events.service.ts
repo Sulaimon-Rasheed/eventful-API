@@ -16,6 +16,7 @@ import {DateTime} from "luxon"
 import { Auth0Service } from 'src/auth/auth0.service';
 import { CacheService } from 'src/cache/cache.service';
 import  * as sanitizeHtml from "sanitize-html"
+import * as fs from 'fs';
 
 @Injectable()
 export class EventsService {
@@ -37,14 +38,14 @@ export class EventsService {
 
   async createEvent(
     createEventDto: CreateEventDto,
-    filePath: string,
+    event_image:Express.Multer.File,
     req: any,
     res: Response,
   ) {
     try {
       await this.Authservice.ensureLogin(req, res);
 
-      const result = await v2.uploader.upload(filePath, {
+      const result = await v2.uploader.upload(event_image.path, {
         folder: 'eventful_event_image',
       });
 
@@ -74,6 +75,13 @@ export class EventsService {
         event_image: result,
         additional_info:sanitizedAddContent,
         creatorId: res.locals.user.id,
+      });
+
+
+      fs.unlink(event_image.path, (err) => {
+        if (err) {
+          throw new Error('file unlink failed');
+        }
       });
 
       const creator = await this.creatorModel.findOne({_id:res.locals.user.id})
