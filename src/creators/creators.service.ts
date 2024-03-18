@@ -68,7 +68,7 @@ export class CreatorsService {
       });
       if (!result) {
         return res.json({
-          code:500,
+          statusCode:500,
           message:"Opps! file upload failed"
         })
       }
@@ -142,7 +142,7 @@ export class CreatorsService {
       });
 
       return res.json({
-        code:201,
+        statusCode:201,
         message:"Successful signup. Check your email for verification link."
       })
       
@@ -156,7 +156,7 @@ export class CreatorsService {
     let currUrl = "https://eventful-api-ky65.onrender.com"
     try{
       return res.json({
-        code:200,
+        statusCode:200,
         page:"Sign Up page",
         signupUrl:`${currUrl}/creators/signup`
       })
@@ -170,7 +170,7 @@ export class CreatorsService {
       let currUrl = "https://eventful-api-ky65.onrender.com"
       try{
         return res.json({
-          code:200,
+          statusCode:200,
           page:"Login page",
           loginUrl:`${currUrl}/creators/login`
         })
@@ -183,7 +183,7 @@ export class CreatorsService {
         let currUrl = "https://eventful-api-ky65.onrender.com"
         try{
           return res.json({
-            code:200,
+            statusCode:200,
             page:"Password Reset page",
             emailAuthenticationUrl:`${currUrl}/creators/verifyEmailForPasswordReset`
           })
@@ -200,7 +200,7 @@ export class CreatorsService {
 
       if (!user) {
         return res.json({
-          code:404,
+          statusCode:404,
           message:"Opps!! user not found."
         })
       }
@@ -216,7 +216,7 @@ export class CreatorsService {
       );
       if (!valid) {
         return res.json({
-          code:400,
+          statusCode:400,
           message:"Opps!! It seems you have altered your verification link.Try again"
         })
         
@@ -229,7 +229,7 @@ export class CreatorsService {
       await this.creatorVerificationModel.deleteOne({ creatorId: userId });
 
       return res.json({
-        code:200,
+        statusCode:200,
         message:"Successful Verification"
       })
     } catch (err) {
@@ -252,7 +252,7 @@ export class CreatorsService {
       });
       if (!creator) {
         return res.json({
-          code:404,
+          statusCode:404,
           message:"Opps!! User not found"
         })
       }
@@ -280,7 +280,7 @@ export class CreatorsService {
         </div>`,
       });
       return res.json({
-        code:201,
+        statusCode:201,
         message:"Successful password reset request. check your email for verification link"
       })
     } catch (err) {
@@ -298,7 +298,7 @@ export class CreatorsService {
       const user = await this.creatorModel.findOne({ email: email });
       if (!user) {
         return res.json({
-          code:404,
+          statusCode:404,
           message:"Opps!! User not found"
         })
       }
@@ -315,7 +315,7 @@ export class CreatorsService {
       user.save();
 
       return res.json({
-        code:200,
+        statusCode:200,
         message:"Successful verification",
         passwordResetUrl:`/creators/newPassword/${user._id}`
       })
@@ -334,20 +334,18 @@ export class CreatorsService {
     const user = await this.creatorModel.findOne({ _id: userId });
     if (!user) {
       return res.json({
-        code:404,
+        statusCode:404,
         message:`Opps!! User not found`
       })
     }
 
     const newPassword = newPasswordDto.newPassword;
-    console.log(newPassword);
     const hashedPassword = await encoding.encodePassword(newPassword);
-    console.log(hashedPassword);
     user.password = hashedPassword;
     user.save();
 
     return res.json({
-      code:201,
+      statusCode:201,
       message:"Successful password reset. You can now login with your new password."
     })
   }
@@ -360,14 +358,14 @@ export class CreatorsService {
 
       if (!user) {
         return res.json({
-          code:401,
+          statusCode:401,
           message:`Opps!! User not found`
         })
       }
 
       if (!user.verified) {
         return res.json({
-          code:401,
+          statusCode:401,
           message:`Opps!! You are not yet verified. Check your email for verification link`
         })
       }
@@ -379,8 +377,8 @@ export class CreatorsService {
 
       if (!valid) {
         return res.json({
-          code:401,
-          message:`Opps!! email or password is incorrect.`
+          statusCode:401,
+          message:`Opps!! email or password is incorrect.`,
         })
       }
 
@@ -394,7 +392,7 @@ export class CreatorsService {
 
       res.cookie('jwt', token, { maxAge: 60 * 60 * 1000 });
       return res.json({
-        code:200,
+        statusCode:200,
         message:"Successful login",
         token:token
       })
@@ -406,7 +404,7 @@ export class CreatorsService {
   async getCreatorHomePage(req: any, res: Response) {
     try {
         return res.json({
-          code:200,
+          statusCode:200,
           page:"Welcome to the Creator home page",
           purpose:"...where the unforgetable moments are created"
         })
@@ -437,7 +435,11 @@ export class CreatorsService {
           .limit(eventPerPage);
 
         if (!events) {
-          return [];
+          return res.json({
+            statusCode:200,
+            message:`Welcome ${res.locals.user.name} to your dashboard. You have not created any event yet`,
+            result:[]
+          })
         }
 
         let theEvents = []
@@ -482,7 +484,7 @@ export class CreatorsService {
         );
 
         return res.json({
-          code:200,
+          statusCode:200,
           message:`Welcome ${res.locals.user.name} to your dashboard`,
           profileImage:`${res.locals.user.image.url}`,
           data:theEvents,
@@ -491,7 +493,7 @@ export class CreatorsService {
       }
       
       return res.json({
-        code:200,
+        statusCode:200,
         message:`Welcome ${res.locals.user.name} to your dashboard`,
         profileImage:`${res.locals.user.image.url}`,
         data:theEvents,
@@ -544,7 +546,7 @@ async openWallet(req:any, res:Response){
     }
 
     return res.json({
-      code:200,
+      statusCode:200,
       meaasage:"This is your wallet Info.",
       balance:wallet.balance,
       last_update:wallet.updatedAt,
@@ -565,7 +567,7 @@ async debitWallet(debitDto:debitDto, walletId:string, req:any, res:Response, ){
   const creator = await this.creatorModel.findOne({_id:res.locals.user.id})
   if(!creator){
     return res.json({
-      code:401,
+      statusCode:401,
       error:"Creator not found"
     })
   }
@@ -574,14 +576,14 @@ async debitWallet(debitDto:debitDto, walletId:string, req:any, res:Response, ){
   const wallet = await (await this.walletModel.findOne({_id:walletId, status:"active"})).populate("transactions")
   if(!wallet){
     return res.json({
-      code:403,
+      statusCode:403,
       error:"Wallet not active"
     })
   }
 
   if(wallet.balance - amount < 0){
     return res.json({
-      code:431,
+      statusCode:431,
       error:"Insufficient Balance"
     })
   }
@@ -616,7 +618,7 @@ async debitWallet(debitDto:debitDto, walletId:string, req:any, res:Response, ){
   })
 
   return res.json({
-    code:200,
+    statusCode:200,
     message:"Successful Transaction",
     balance:wallet.balance
   })
@@ -684,6 +686,7 @@ async debitWallet(debitDto:debitDto, walletId:string, req:any, res:Response, ){
             theEvents,
           );
           return res.json({
+            statusCode:200,
             message:`Welcome ${res.locals.user.name}`,
             profileImage:`${res.locals.user.image.url}`,
             data:theEvents,
@@ -740,7 +743,7 @@ async debitWallet(debitDto:debitDto, walletId:string, req:any, res:Response, ){
             theEvents,
           );
           return res.json({
-            code:200,
+            statusCode:200,
             message:`Welcome ${res.locals.user.name}`,
             profileImage:`${res.locals.user.image.url}`,
             result:events,
@@ -750,7 +753,7 @@ async debitWallet(debitDto:debitDto, walletId:string, req:any, res:Response, ){
         }
       }
       return res.json({
-        code:200,
+        statusCode:200,
         message:`Welcome ${res.locals.user.name}`,
         profileImage:`${res.locals.user.image.url}`,
         data:theEvents,
@@ -790,7 +793,7 @@ async debitWallet(debitDto:debitDto, walletId:string, req:any, res:Response, ){
       }
       
       return res.json({
-        code:200,
+        statusCode:200,
         numbers_of_unticketedEventees:count,
         result:unticketedEventees,
       }) 
@@ -808,7 +811,7 @@ async debitWallet(debitDto:debitDto, walletId:string, req:any, res:Response, ){
         .populate('ticketedEventeesId');
       if (!event) {
         return res.json({
-          code:200,
+          statusCode:404,
           error:"Event not found"
         })
       }
@@ -829,7 +832,7 @@ async debitWallet(debitDto:debitDto, walletId:string, req:any, res:Response, ){
       }
 
       return res.json({
-        code:200,
+        statusCode:200,
         numbers_of_ticketedEventees:count,
         result:ticketedEventees,
       }) 
@@ -849,7 +852,7 @@ async debitWallet(debitDto:debitDto, walletId:string, req:any, res:Response, ){
         .populate('scannedEventeesId');
       if (!event) {
         return res.json({
-          code:404,
+          statusCode:404,
           error:"Event not found"
         })
       }
@@ -869,7 +872,7 @@ async debitWallet(debitDto:debitDto, walletId:string, req:any, res:Response, ){
       }
 
       return res.json({
-        code:200,
+        statusCode:200,
         numbers_of_scannedEventees:count,
         result:scannedEventees,
       }) 
@@ -890,7 +893,7 @@ async debitWallet(debitDto:debitDto, walletId:string, req:any, res:Response, ){
     
       if (!creator) {
         return res.json({
-          code:404,
+          statusCode:404,
           error:"Creator not found"
         })
       }
@@ -911,7 +914,7 @@ async debitWallet(debitDto:debitDto, walletId:string, req:any, res:Response, ){
       }
 
       return res.json({
-        code:200,
+        statusCode:200,
         numbers_of_allTicketedEventees:count,
         result:allTicketedEventees,
       }) 
@@ -930,7 +933,7 @@ async debitWallet(debitDto:debitDto, walletId:string, req:any, res:Response, ){
     
       if (!creator) {
         return res.json({
-          code:404,
+          statusCode:404,
           error:"Creator not found"
         })
       }
@@ -951,7 +954,7 @@ async debitWallet(debitDto:debitDto, walletId:string, req:any, res:Response, ){
       }
 
       return res.json({
-        code:200,
+        statusCode:200,
         numbers_of_allScannedEventees:count,
         result:allScannedEventees,
       }) 
@@ -982,7 +985,7 @@ async debitWallet(debitDto:debitDto, walletId:string, req:any, res:Response, ){
       let theDay = UpdateEventDto.reminder_days;
       if(!theDay){
         return res.json({
-          code:400,
+          statusCode:400,
           error:"reminder day can not be empty"
         })
       }
@@ -1002,7 +1005,7 @@ async debitWallet(debitDto:debitDto, walletId:string, req:any, res:Response, ){
     try {
         await this.Authservice.ensureLogin(req, res);
         return res.json({
-          code:200,
+          statusCode:200,
           page:"Scanner page"
         })
     } catch (err) {
@@ -1044,7 +1047,7 @@ async debitWallet(debitDto:debitDto, walletId:string, req:any, res:Response, ){
       eventee.save()
 
       res.json({
-        code:200,
+        statusCode:200,
         message:"Scanning result Saved successfully"
       })
 

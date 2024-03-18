@@ -35,11 +35,13 @@ export class AppService {
 
       this.cacheService.set(`homePage`, theEvents)
       return res.json({
+        statusCoode:200,
         message:"Eventful. ...your passport to a world of unforgettable moments",
         data:theEvents
       })
     }
     return res.json({
+      statusCoode:200,
       message:"Eventful. ...your passport to a world of unforgettable moments",
       data:theEvents
     })
@@ -49,60 +51,70 @@ export class AppService {
   
   getHelpCenter(req:Request, res:Response){
     return res.json({
+      statusCoode:200,
       message:"Welcome to the Help center"
     })
   }
 
   getChecklisiting(req:Request, res:Response){
   return res.json({
+    statusCoode:200,
       message:"Welcome to the 'Checklisiting' documentation page"
     })
   }
 
   getTicketPurchase(req:Request, res:Response){
     return res.json({
+      statusCoode:200,
       message:"Welcome to the 'Ticket Purchase' documentation page"
     })
   }
 
   getShare(req:Request, res:Response){
     return res.json({
+      statusCoode:200,
       message:"Welcome to the 'Event Sharing' documentation page"
     })
   }
 
   getEventeeAnalytics(req:Request, res:Response){
     return res.json({
+      statusCoode:200,
       message:"Welcome to the 'Eventee Analytics' documentation page"
     })
   }
 
   getTicketScanning(req:Request, res:Response){
     return res.json({
+      statusCoode:200,
       message:"Welcome to the 'Ticket scanning' documentation page"
     })
   }
 
   getUpdate(req:Request, res:Response){
     return res.json({
+      statusCoode:200,
       message:"Welcome to the 'Event update' documentation page"
     })
   }
 
   getPayout(req:Request, res:Response){
     return res.json({
+      statusCoode:200,
       message:"Welcome to the 'Payout system' documentation page"
     })
   }
 
   getCreatorAnalytics(req:Request, res:Response){
     return res.json({
+      statusCoode:200,
       message:"Welcome to the 'Creator Analytics' documentation page"
     })
   }
 
   getFaq(req:Request, res:Response){
     return res.json({
+      statusCoode:200,
       message:"Welcome to the 'FAQ' documentation page"
     })
   }

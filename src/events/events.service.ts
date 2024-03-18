@@ -86,13 +86,17 @@ export class EventsService {
 
       const creator = await this.creatorModel.findOne({_id:res.locals.user.id})
       if(!creator){
-        return res.render("error", {message:"creatorNotFound"})
+        return res.json({
+          statusCode:200,
+          message:"Creator not found"
+        })
       }
 
 
       creator.eventsId.push(newEvent._id)
       
       return res.json({
+        statusCode:200,
         message:"Event created successfully",
         redirectedUrl:"/events/createEvent"
       })
@@ -112,11 +116,13 @@ export class EventsService {
      
       if (user.freePlan == false) {
         res.json({
+          statusCode:403,
           error:"Your free plan has expired"
         })
       }
 
       res.json({
+        statusCode:200,
         page:"Event creation page",
         eventCreationUrl:`${currUrl}/events/createEvent`
       })
@@ -138,6 +144,7 @@ export class EventsService {
         
         if(!event){
           return res.json({
+            statusCode:404,
             error:"Event not found"
           })
         }
@@ -151,11 +158,13 @@ export class EventsService {
 
         await this.cacheService.set(`eventUpdate_${res.locals.user.id}_${eventId}`, neededInfo)
         return res.json({
+          statusCode:200,
           page:"Event Update page",
           eventToUpdate:neededInfo
         })
       }
       return res.json({
+        statusCode:200,
         page:"Event Update page",
         eventToUpdate:neededInfo
       })
@@ -182,6 +191,7 @@ export class EventsService {
         await this.cacheService.remove(`creatorDashBoard_${res.locals.user.id}_${page}`)
       }
       return res.json({
+        statusCode:200,
         message:"Successful update"
       })
       
@@ -195,11 +205,15 @@ export class EventsService {
       await this.Authservice.ensureLogin(req,res)
       const event = await this.eventModel.findByIdAndDelete(eventId)
       if(!event){
-        return res.render("error", {message:"eventNotFound"})
+        return res.json({
+          statusCoode:404,
+          message:"Event not found"
+        })
       }
 
       await this.cacheService.remove(`eventUpdate_${res.locals.user.id}_${eventId}`)
       return res.json({
+        statusCoode:200,
         message:"Event successfully deleted"
       })
     }catch(err){
@@ -226,6 +240,7 @@ export class EventsService {
       }
       
       return res.json({
+        statusCoode:200,
         message:"Event successfully posted",
         reidrectedUrl:"/creators/creatorDashboard"
       })
@@ -240,11 +255,13 @@ export class EventsService {
       const chosenEvent = await this.eventModel.findOne({ _id: eventId });
       if (chosenEvent.unticketedEventeesId.includes(res.locals.user.id)) {
         return res.json({
+          statusCoode:403,
           message:"Opps!! You have listed this event before"
         })
       }
       if (chosenEvent.ticketedEventeesId.includes(res.locals.user.id)) {
         return res.json({
+          statusCoode:403,
           message:"Opps!! You have bought this event ticket before"
         })
       }
@@ -256,6 +273,7 @@ export class EventsService {
       
       if(difference > 0){
         return res.json({
+          statusCoode:401,
           message:"Opps!! Ticket purchase has expired"
         })
       }
@@ -264,6 +282,7 @@ export class EventsService {
       await chosenEvent.save();
 
       return res.json({
+        statusCoode:200,
         message:"Event added successfully",
         redirectUrl:'/eventees/eventeeDashboard'
       })
@@ -278,17 +297,24 @@ export class EventsService {
       await this.Authservice.ensureLogin(req, res);
       const eventToRemove = await this.eventModel.findOne({ _id: eventId });
       if (!eventToRemove.unticketedEventeesId.includes(res.locals.user.id) && !eventToRemove.ticketedEventeesId.includes(res.locals.user.id)) {
-        return res.render("error", {message:"eventNotOnListBefore"});
+        return res.json({
+          statusCoode:403,
+          message:"Event is not on your checklist before.",
+        })
       }
 
       if (eventToRemove.ticketedEventeesId.includes(res.locals.user.id) && !eventToRemove.unticketedEventeesId.includes(res.locals.user.id)) {
-        return res.render("error", {message:"eventNotRemovable"});
+        return res.json({
+          statusCoode:403,
+          message:"You can't remove this event. You already bought ticket for it",
+        })
       }
 
       const index = eventToRemove.unticketedEventeesId.indexOf(res.locals.user.id);
       eventToRemove.unticketedEventeesId.splice(index, 1);
       eventToRemove.save();
       return res.json({
+        statusCoode:200,
         message:"Event removed successfully",
         redirectUrl:'/eventees/eventeeDashboard'
       })
@@ -322,6 +348,7 @@ export class EventsService {
       await this.cacheService.set(`event_${res.locals.user.id}`, myCheckLists)
 
       return res.json({
+        statusCoode:200,
         message:"Your Checklist",
         data:myCheckLists,
       })
@@ -357,17 +384,47 @@ export class EventsService {
         await this.cacheService.set(`thisEvent_${eventId}`, neededInfo)
   
         return res.json({
+          statusCoode:200,
           data:neededInfo 
         })
         
       }
       return res.json({
+        statusCoode:200,
         data:neededInfo
       })
       
     }catch(err){
         return new Error(err.message)
       }
+  }
+
+  async changePrice(eventId:string, req: any, res:Response, UpdateEventDto:UpdateEventDto){
+    try{
+      await this.Authservice.ensureLogin(req, res);
+      let newPrice = UpdateEventDto.ticket_price
+      const event = await this.eventModel.findByIdAndUpdate(eventId, {ticket_price:newPrice})
+      if(!event){
+        throw new NotFoundException("event not found")
+      }
+
+      await this.cacheService.remove(`eventUpdate_${res.locals.user.id}_${eventId}`)
+
+    for(let page = 0; page<100; page++){
+      await this.cacheService.remove(`creatorDashBoard_${res.locals.user.id}_${page}`)
+    }
+
+    return res.json({
+      message:"Successful price change",
+      statusCoode:200,
+      data:`Ticket price is now ${event.ticket_price}`
+    })
+      return res.redirect(`/events/eventUpdatePage/${event._id}`)
+
+
+    }catch(err){
+      return new Error(err.message)
+    }
   }
 
 

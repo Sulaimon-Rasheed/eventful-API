@@ -22,6 +22,7 @@ export class AuthService {
         try{
 
             const bearerwithToken = req.headers.authorization
+            
             if(!bearerwithToken){
               return res.json({
                 code:401,
@@ -29,8 +30,8 @@ export class AuthService {
               })
           }
             const token = bearerwithToken.split(" ")[1]
-            
             const decoded = await jwt.verify(token , process.env.JWT_SECRET)
+            console.log(decoded)
             res.locals.user = decoded
 
         }catch(err){

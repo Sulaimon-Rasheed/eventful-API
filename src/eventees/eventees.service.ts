@@ -75,6 +75,7 @@ export class EventeesService {
 
       if (!result) {
         return res.json({
+          statusCode:400,
           message:"Opps! file upload failed"
         })
       }
@@ -135,6 +136,7 @@ export class EventeesService {
       });
 
       return res.json({
+        statusCode:200,
         message:"Successful signup. Check your email for verification link."
       })
 
@@ -148,6 +150,7 @@ export class EventeesService {
     let currUrl = "https://eventful-api-ky65.onrender.com"
     try{
       return res.json({
+        statusCode:200,
         page:"Sign Up page",
         signupUrl:`${currUrl}/eventees/signup`
       })
@@ -161,6 +164,7 @@ export class EventeesService {
       let currUrl = "https://eventful-api-ky65.onrender.com"
       try{
         return res.json({
+          statusCode:200,
           page:"Password Reset page",
           emailAuthenticationUrl:`${currUrl}/eventees/verifyEmailForPasswordReset`
         })
@@ -178,6 +182,7 @@ export class EventeesService {
 
       if (!user) {
         return res.json({
+          statusCode:404,
           message:"Opps!! user not found."
         })
       }
@@ -193,6 +198,8 @@ export class EventeesService {
       );
       if (!valid) {
         return res.json({
+          statusCode:400,
+          error:"Bad request",
           message:"Opps!! It seems you have altered your verification link.Try again"
         })
       }
@@ -203,6 +210,7 @@ export class EventeesService {
       );
       await this.eventeeVerificationModel.deleteOne({ eventeeId: userId });
       return res.json({
+        statusCode:200,
         message:"Successful Verification"
       })
     } catch (err) {
@@ -222,12 +230,14 @@ export class EventeesService {
 
       if (!user) {
         return res.json({
+          statusCode:404,
           message:`Opps!! User not found`
         })
       }
 
       if (!user.verified) {
         return res.json({
+          statusCode:400,
           message:`Opps!! You are not yet verified. Check your email for verification link`
         })
       }
@@ -239,6 +249,7 @@ export class EventeesService {
 
       if (!valid) {
         return res.json({
+          statusCode:401,
           message:`Opps!! email or password is incorrect.`
         })
       }
@@ -253,6 +264,7 @@ export class EventeesService {
 
       res.cookie('jwt', token, { maxAge: 60 * 60 * 1000 });
       return res.json({
+        statusCode:200,
         message:"Successful login",
         token:token,
       })
@@ -274,6 +286,7 @@ export class EventeesService {
       });
       if (!eventee) {
         return res.json({
+          statusCode:404,
           message:"Opps!! User not found"
         })
       }
@@ -334,6 +347,7 @@ export class EventeesService {
       user.save();
 
       return res.json({
+        statusCode:200,
         message:"Successful verification",
         passwordResetUrl:`/eventees/newPassword/${user._id}`
       })
@@ -351,6 +365,7 @@ export class EventeesService {
     const user = await this.eventeeModel.findOne({ _id: userId });
     if (!user) {
       return res.json({
+        statusCode:404,
         message:`Opps!! User not found`
       })
     }
@@ -362,6 +377,7 @@ export class EventeesService {
     user.password = hashedPassword;
     user.save();
     return res.json({
+      statusCode:200,
       message:"Successful password reset. You can now login with your new password."
     })
   }
@@ -435,6 +451,7 @@ export class EventeesService {
             );
             
             return res.json({
+              statusCode:200,
               message:`Welcome ${res.locals.user.name}` ,
               profileImage:`${res.locals.user.image.url}`,
               posted_events: theEvents,
@@ -443,6 +460,7 @@ export class EventeesService {
           }
 
           return res.json({
+            statusCode:200,
             message:`Welcome ${res.locals.user.name}` ,
             profileImage:`${res.locals.user.image.url}`,
             posted_events: theEvents,
@@ -526,7 +544,8 @@ export class EventeesService {
       );
 
       return res.json({
-        message:`Welcome ${res.locals.user.name}` ,
+        statusCode:200,
+        message:`Welcome ${res.locals.user.name} o your dasboard` ,
         profileImage:`${res.locals.user.image.url}`,
         posted_events: theEvents,
       })
@@ -535,7 +554,8 @@ export class EventeesService {
      }
      
      return res.json({
-      message:`Welcome ${res.locals.user.name}` ,
+      statusCode:200,
+      message:`Welcome ${res.locals.user.name} to your dashboard` ,
       profileImage:`${res.locals.user.image.url}`,
       posted_events: theEvents,
     })
@@ -586,6 +606,7 @@ export class EventeesService {
         await this.cacheService.set(`searchedTitle_${res.locals.user.id}_${upperCaseTittle}`, neededInfo)
 
         return res.json({
+          statusCode:200,
           message:`Welcome ${res.locals.user.name}` ,
           posted_event:neededInfo,
         })
@@ -593,6 +614,7 @@ export class EventeesService {
       }
 
      return res.json({
+      statusCode:200,
       message:`Welcome ${res.locals.user.name}` ,
       posted_event:neededInfo,
      })
@@ -623,6 +645,7 @@ export class EventeesService {
       
       if(difference > 0){
         return res.json({
+          statusCode:401,
           message:"Opps!! This ticket purchase has expired"
         })
       }
@@ -744,6 +767,7 @@ export class EventeesService {
   async getPaymentSuccessPage(res:Response) {
     try{
       return res.json({
+        statusCode:200,
         message:"Successful Payment"
       })
     }catch(err){
@@ -771,6 +795,7 @@ async  getBoughtEventsPage(req:Request, res:Response) {
       count++
     }
     return res.json({
+      statusCode:200,
       numbers_of_boughtEvents:count,
       data:boughtEvents,
     }) 
@@ -797,6 +822,7 @@ async  getAttendedEventsPage(req:Request, res:Response) {
       count++
     }
     return res.json({
+      statusCode:200,
       numbers_of_attendedEvents:count,
       data:attendedEvents,
     }) 
@@ -829,6 +855,7 @@ async  getAttendedEventsPage(req:Request, res:Response) {
       let theDay = UpdateEventeeDto.eventeeReminder_days;
       if(!theDay){
         return res.json({
+          statusCode:400,
           error:"reminder day can not be empty"
         })
       }
@@ -837,6 +864,7 @@ async  getAttendedEventsPage(req:Request, res:Response) {
       eventee.save();
 
       return res.json({
+        statusCode:200,
         meessage:"Successful update",
         redirectedUrl:'/events/MyCheckList'
       })

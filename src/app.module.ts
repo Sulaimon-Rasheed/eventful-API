@@ -18,6 +18,8 @@ import { eventeeSchema } from './eventees/eventees.model';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { CacheService } from './cache/cache.service';
 dotenv.config()
+import { APP_FILTER } from '@nestjs/core';
+import { GlobalExceptionFilter } from './globalError/global.filter';
 
 @Module({
   imports: [
@@ -32,6 +34,11 @@ dotenv.config()
     
     ],
   controllers: [AppController],
-  providers: [AppService, AuthService, MailerService, SocialmediaService, CronService, CacheService],
+  providers: [AppService, AuthService, MailerService, SocialmediaService, CronService, CacheService,
+    {
+      provide: APP_FILTER,
+      useClass: GlobalExceptionFilter,
+    },
+  ],
 })
 export class AppModule{}
