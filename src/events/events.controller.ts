@@ -62,12 +62,12 @@ export class EventsController {
     return res.render("myCheckList", {lists:result[0], eventeeId:result[1], reminderDaySuccess})
   }
 
-  @Get('thisEvent/:eventId')
+  @Get('/thisEvent/:eventId')
   async getThisEvent(@Param('eventId') eventId: string,@Res() res:Response ) {
     await this.eventsService.getThisEvent(eventId, res);
   }
 
-  @Post('changePrice/:eventId')
+  @Post('/changePrice/:eventId')
   async changePrice(@Param('eventId') eventId: string, @Req() req:Request,@Res() res:Response,@Body(new ValidationPipe) UpdateEventDto:UpdateEventDto ) {
     await this.eventsService.changePrice(eventId, req, res, UpdateEventDto);
   }

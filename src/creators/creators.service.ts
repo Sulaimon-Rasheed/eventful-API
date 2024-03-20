@@ -442,15 +442,19 @@ export class CreatorsService {
         }
 
         let theEvents = []
+        
         for(const event of events){
-          let postDate = event.posted_date;
-          let parsedDate = DateTime.fromFormat(
-            postDate,
-            "LLL d, yyyy",
+          if(event.state == "Draft"){
+            let draftDate = event.created_date;
+            let parsedDate = DateTime.fromFormat(
+            draftDate,
+            'LLL d, yyyy \'at\' HH:mm',
           );
+
           let currentDate = DateTime.now();
           const pastDay = currentDate.diff(parsedDate, 'days').toObject().days
 
+          
           let theDay;
               if( pastDay >=0 && pastDay< 0.5){
                 theDay = "today"
@@ -464,18 +468,57 @@ export class CreatorsService {
                 theDay = `${Math.round(pastDay)} days`
               }
 
-          const neededInfo = {
-            posted:theDay,
-            event_Id:event._id,
-            title:event.title,
-            eventImage:event.event_image.url,
-            time:`${event.starting_time} - ${event.ending_time}`,
-            venue:event.venue,
-            creator:event.creatorId,
-            shareEventUrl:`https://eventful-api-ky65.onrender.com/events/thisEvent/${event._id}`
-            
+
+
+            const neededInfo = {
+              drafted:theDay,
+              event_Id:event._id,
+              title:event.title,
+              eventImage:event.event_image.url,
+              time:`${event.starting_time} - ${event.ending_time}`,
+              venue:event.venue,
+              creator:event.creatorId,
+              required_action:"Go to the event posting endpoint to Post this event"
+              
+            }
+            theEvents.push(neededInfo)
+          
+          }else{
+
+            let postDate = event.posted_date;
+            let parsedDate = DateTime.fromFormat(
+              postDate,
+              "LLL d, yyyy",
+            );
+
+            let currentDate = DateTime.now();
+            const pastDay = currentDate.diff(parsedDate, 'days').toObject().days
+
+            let theDay;
+              if( pastDay >=0 && pastDay< 0.5){
+                theDay = "today"
+              }else if(pastDay >=0.5 && pastDay < 1.5){
+                theDay = "yesterday"
+              }else if(pastDay > 30){
+                theDay = `${Math.floor((pastDay)/30)} month(s) ago`
+              }else if(pastDay > 365){
+                theDay = `${Math.floor((pastDay)/365)} year(s) ago`
+              }else{
+                theDay = `${Math.round(pastDay)} days`
+              }
+
+            const neededInfo = {
+              posted:theDay,
+              event_Id:event._id,
+              title:event.title,
+              eventImage:event.event_image.url,
+              time:`${event.starting_time} - ${event.ending_time}`,
+              venue:event.venue,
+              creator:event.creatorId,
+              analytics:"You can get the count of ticketedEventees, unticketedEventees and scannedEventees of this event. Go to the respective route.Copy the event ID from above."
+            }
+            theEvents.push(neededInfo)
           }
-          theEvents.push(neededInfo)
         }
       
         await this.cacheService.set(
