@@ -62,7 +62,6 @@ export class EventsService {
       const newEvent = await this.eventModel.create({
         title: upperCaseTittle,
         description: sanitizedContent,
-        location: createEventDto.venue,
         event_date:formattedEventDate ,
         starting_time:createEventDto.starting_time,
         ending_time:createEventDto.ending_time,
@@ -71,7 +70,6 @@ export class EventsService {
         category:createEventDto.category,
         registration_deadline:formattedDeadlineDate,
         ticket_price: createEventDto.ticket_price,
-        discount: createEventDto.discount,
         event_image: result,
         additional_info:sanitizedAddContent,
         creatorId: res.locals.user.id,
@@ -98,7 +96,9 @@ export class EventsService {
       return res.json({
         statusCode:200,
         message:"Event created successfully",
-        redirectedUrl:"/events/createEvent"
+        event_Id:newEvent._id,
+        event_Title:newEvent.title,
+        event_Category:newEvent.category
       })
     
     } catch (err) {
@@ -363,14 +363,14 @@ export class EventsService {
     try{
       let neededInfo = await this.cacheService.get(`thisEvent_${eventId}`)
       if(!neededInfo ){
-        const event = await this.eventModel.findOne({_id:eventId}).populate("creatorId")
+        const event:any = await this.eventModel.findOne({_id:eventId}).populate("creatorId")
         if(!event){
           throw new NotFoundException("event not found")
         }
 
         const neededInfo = {
           title:event.title,
-          eventImage:event.event_image,
+          eventImage:event.event_image.url,
           about:event.description,
           date:event.event_date,
           time:`${event.starting_time} - ${event.ending_time}`,
@@ -385,7 +385,7 @@ export class EventsService {
   
         return res.json({
           statusCoode:200,
-          data:neededInfo 
+          event_details:neededInfo 
         })
         
       }

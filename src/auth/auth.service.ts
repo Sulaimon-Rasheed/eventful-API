@@ -19,24 +19,22 @@ export class AuthService {
     }
 
     async ensureLogin(req:Request, res:Response){
-        try{
-
-            const bearerwithToken = req.headers.authorization
-            
-            if(!bearerwithToken){
-              return res.json({
-                code:401,
-                message:"Jwt is required"
-              })
-          }
-            const token = bearerwithToken.split(" ")[1]
-            const decoded = await jwt.verify(token , process.env.JWT_SECRET)
-            console.log(decoded)
-            res.locals.user = decoded
-
-        }catch(err){
-            throw new Error(err.meessage)
-        }
+    
+            try{
+                const token:string = req.cookies.jwt
+                if(!token){
+                    return res.json({
+                        code:401,
+                        message:"Jwt is required"
+                    })
+                }
+        
+                const decoded = await jwt.verify(token, this.jwtSecret)
+        
+                res.locals.user = decoded
+            }catch(err){
+                throw new Error(err.meessage)
+            }
        
     }
 

@@ -140,7 +140,10 @@ export class CreatorsController {
   @Get("/logout")
   logOut(@Res() res:Response){
    res.clearCookie("jwt")
-   res.redirect("/creators/login")
+   res.json({
+    statusCode:200,
+    message:"You are successfully logged out"
+   })
   }
 
 }

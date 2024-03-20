@@ -115,6 +115,9 @@ export class EventeesController {
      @Get("/logout")
      async logOut(@Res() res:Response){
       await res.clearCookie("jwt")
-      res.redirect("/eventees/login")
+      res.json({
+        statusCode:200,
+        message:"You are successfully logged out"
+      })
      }
 }

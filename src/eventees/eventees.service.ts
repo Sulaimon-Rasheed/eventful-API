@@ -29,6 +29,8 @@ import { emailVerificationDto } from './dto/emailVerification.dto';
 import { newEpasswordDto } from './dto/newEpassword.dto';
 import { DateTime } from 'luxon';
 import { Creator } from 'src/creators/creators.model';
+import { CurrencyService } from '../exchanger/currencyExchange.service';
+import { Wallet } from '../wallets/wallets.model';
 
 @Injectable()
 export class EventeesService {
@@ -38,11 +40,13 @@ export class EventeesService {
     private readonly eventeeVerificationModel: Model<EventeeVerification>,
     @InjectModel('Event') private readonly eventModel: Model<Event>,
     @InjectModel('Creator') private readonly creatorModel: Model<Creator>,
+    @InjectModel('Wallet') private readonly walletModel: Model<Wallet>,
     @InjectModel('Transaction')
     private readonly transactionModel: Model<Transaction>,
     private readonly mailservice: MailerService,
     private readonly Authservice: AuthService,
     private readonly cacheService: CacheService,
+    private readonly currencyService :CurrencyService ,
   ) {
     v2.config({
       cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -266,7 +270,6 @@ export class EventeesService {
       return res.json({
         statusCode:200,
         message:"Successful login",
-        token:token,
       })
     } catch (err) {
       throw new Error(err.message)
@@ -654,14 +657,17 @@ export class EventeesService {
         _id: res.locals.user.id,
       });
 
+      let NairaPerDollar = await this.currencyService.getExchangeRate(res)
+      let thePriceInNaira = await this.currencyService.convertDollarToNaira(price , NairaPerDollar ) 
+
       const transaction = await this.transactionModel.create({
-        amount: price,
+        amount: `${price}`,
         eventId: eventId,
         eventeeId: eventee._id,
       });
 
       const data = {
-        amount: price * 100,
+        amount: thePriceInNaira * 100,
         email: eventee.email,
         reference: transaction._id,
       };
@@ -725,10 +731,27 @@ export class EventeesService {
         eventee.bought_eventsId.push(event._id);
         eventee.save();
 
+
+        const wallet = await this.walletModel.findOne({creatorId:creator.id, status:"active"})
+        if(!wallet){
+          return res.render("error", {message:"inactiveWallet"})
+        }
+  
+        let amountInDollar = parseInt(transaction.amount) 
+  
+        wallet.balance = wallet.balance + (amountInDollar - (0.2 * amountInDollar))
+        
+        wallet.transactions.push(transaction._id)
+        wallet.updatedAt = DateTime.now().toFormat('LLL d, yyyy \'at\' HH:mm')
+        wallet.save()
+  
+        const exchangeRate = await this.currencyService.getExchangeRate(res)
+        const amountPaidInNaira = Math.round(parseInt(transaction.amount)  * exchangeRate)
+
         const data = {
           name: `${eventee.first_name} ${eventee.last_name}`,
           event_title: event.title,
-          amount: `N${transaction.amount}`,
+          amount: `NGN${amountPaidInNaira}`,
           ticketed_date: transaction.created_date,
           transactionId: transaction._id,
           eventId:event._id

@@ -394,7 +394,6 @@ export class CreatorsService {
       return res.json({
         statusCode:200,
         message:"Successful login",
-        token:token
       })
     } catch (err) {
       throw new Error(err.message)
@@ -467,8 +466,9 @@ export class CreatorsService {
 
           const neededInfo = {
             posted:theDay,
+            event_Id:event._id,
             title:event.title,
-            eventImage:event.event_image,
+            eventImage:event.event_image.url,
             time:`${event.starting_time} - ${event.ending_time}`,
             venue:event.venue,
             creator:event.creatorId,
@@ -496,7 +496,7 @@ export class CreatorsService {
         statusCode:200,
         message:`Welcome ${res.locals.user.name} to your dashboard`,
         profileImage:`${res.locals.user.image.url}`,
-        data:theEvents,
+        posted_Events:theEvents,
       })
       
     } catch (err) {

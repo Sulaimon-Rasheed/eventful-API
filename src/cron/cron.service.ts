@@ -128,6 +128,25 @@ export class CronService {
         
       }
     })
+
+
+ // Event deleting cron job
+ cron.schedule("0 0 1 * *", async()=>{
+  this.logger.debug('Running old events deleting task...');
+  const events = await this.eventModel.find()
+  for(const event of events){
+    let parsedDate = DateTime.fromFormat(event.event_date , 'LLL d, yyyy');
+    let currentDate = DateTime.now()
+    let daysDiff = Math.round(currentDate.diff(parsedDate, 'days').toObject().days)
+
+    if(daysDiff > 90){
+        await eventModel.findByIdAndDelete(event._id)
+    }
+  }
+})
+
+
+
   }
 }
 

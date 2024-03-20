@@ -37,7 +37,6 @@ export interface Event extends mongoose.Document{
     category:string
     registration_deadline:string
     ticket_price:string
-    discount:string
     event_image:object
     state:string
     additional_info:string

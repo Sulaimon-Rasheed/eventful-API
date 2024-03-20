@@ -62,7 +62,7 @@ export class EventsController {
     return res.render("myCheckList", {lists:result[0], eventeeId:result[1], reminderDaySuccess})
   }
 
-  @Get('thisEvent/share/:eventId')
+  @Get('thisEvent/:eventId')
   async getThisEvent(@Param('eventId') eventId: string,@Res() res:Response ) {
     await this.eventsService.getThisEvent(eventId, res);
   }

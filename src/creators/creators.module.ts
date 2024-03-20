@@ -22,6 +22,7 @@ import { ConfigService } from '@nestjs/config';
 import { CronService } from 'src/cron/cron.service';
 import { CacheService } from 'src/cache/cache.service';
 import { walletSchema } from 'src/wallets/wallets.model';
+import { CurrencyService } from 'src/exchanger/currencyExchange.service';
 
 
 @Module({
@@ -29,6 +30,6 @@ import { walletSchema } from 'src/wallets/wallets.model';
    MongooseModule.forFeature([{name:"Creator", schema:creatorSchema},{name:"Event", schema:eventSchema},{name:"CreatorVerification", schema:creatorVerificationSchema}, {name:"Eventee", schema:eventeeSchema}, {name:"EventeeVerification", schema:eventeeVerificationSchema}, {name:"Transaction", schema:transactionSchema}, {name:"Wallet", schema:walletSchema}]),
   ],
   controllers: [CreatorsController, EventsController, EventeesController],
-  providers: [CreatorsService, MailerService, AuthService, EventsService, EventeesService, SocialmediaService, Auth0Service, ConfigService, CronService, CacheService],
+  providers: [CreatorsService, MailerService, AuthService, EventsService, EventeesService, SocialmediaService, Auth0Service, ConfigService, CronService, CacheService, CurrencyService],
 })
 export class CreatorsModule {}
