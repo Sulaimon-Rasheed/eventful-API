@@ -22,7 +22,7 @@ async function bootstrap() {
     saveUninitialized:false
     
   }))
-  app.setViewEngine('ejs');
+  // app.setViewEngine('ejs');
 
   await app.listen(process.env.PORT);
 }
