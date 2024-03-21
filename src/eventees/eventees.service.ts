@@ -672,6 +672,8 @@ export class EventeesService {
         reference: transaction._id,
       };
 
+      console.log(data)
+
       const headers = {
         Authorization: `Bearer ${process.env.PAYSTACK_KEY}`,
       };
@@ -680,11 +682,18 @@ export class EventeesService {
         'https://api.paystack.co/transaction/initialize',
         data,
         { headers },
-      );
+      ).then((response)=>{
+        return res.json({
+          transactionUrl:response.data.data.authorization_url
+        })
+    })
+      .catch(err=>{
+        return res.json({
+          error:JSON.stringify(err)
+        })
+      });
 
-      return res.json({
-        transactionUrl:response.data.data.authorization_url
-      })
+      
     } catch (err) {
       throw new Error(err.message)
     }
