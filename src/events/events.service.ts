@@ -368,7 +368,9 @@ export class EventsService {
           throw new NotFoundException("event not found")
         }
 
-        const neededInfo = {
+        console.log(event.title)
+
+        let neededInfo = {
           title:event.title,
           eventImage:event.event_image.url,
           about:event.description,
@@ -383,16 +385,14 @@ export class EventsService {
 
         await this.cacheService.set(`thisEvent_${eventId}`, neededInfo)
   
+        console.log("I am here")
         return res.json({
           statusCoode:200,
           event_details:neededInfo 
         })
         
       }
-      return res.json({
-        statusCoode:200,
-        data:neededInfo
-      })
+     
       
     }catch(err){
         return new Error(err.message)
